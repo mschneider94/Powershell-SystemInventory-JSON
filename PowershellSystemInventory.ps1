@@ -157,7 +157,7 @@ $inventory = [pscustomobject]@{
   MonitorCount          = $monitorCount
   USBDevices            = $usbDevices
 
-  LastUserFolderTouch   = if ($lastLog) { [pscustomobject]@{ UserFolder=$lastLog.Name; LastWriteTime=$lastLog.LastWriteTime } } else { $null }
+  LastUserFolderTouched = if ($lastLog) { $lastLog.Name } else { $null }
 
   InstalledProducts     = $installedProducts
 }
