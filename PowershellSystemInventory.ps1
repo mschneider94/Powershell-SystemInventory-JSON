@@ -81,14 +81,32 @@ $physicalMemory = Get-CimInstance -ClassName Win32_PhysicalMemory | ForEach-Obje
 }
 
 # --- Network ---
+$netAdaptersPS = @{}; Get-NetAdapter | ForEach-Object { $netAdaptersPS.Add($_.MacAddress, $_) }
 $netAdapters = Get-CimInstance Win32_NetworkAdapterConfiguration -Filter 'IPEnabled=TRUE' |
-  Select-Object Description, DHCPEnabled, DHCPServer,
+  Select-Object -Property Description, DHCPEnabled, DHCPServer,
                 @{n='IPAddress';e={ $_.IPAddress -join ';' }},
                 @{n='IPSubnet';e={ $_.IPSubnet -join ';' }},
                 @{n='DefaultGateway';e={ $_.DefaultIPGateway -join ';' }},
                 DNSDomain,
                 @{n='DNSServerSearchOrder';e={ $_.DNSServerSearchOrder -join ';' }},
                 MACAddress
+				| ForEach-Object {
+					[PSCustomObject] @{
+					  Name = $netAdaptersPS[$_.MACAddress.Replace(':','-')].Name
+					  Description = $_.Description
+					  ifIndex = $netAdaptersPS[$_.MACAddress.Replace(':','-')].ifIndex
+					  Status = $netAdaptersPS[$_.MACAddress.Replace(':','-')].Status
+					  LinkSpeed = $netAdaptersPS[$_.MACAddress.Replace(':','-')].LinkSpeed
+					  DHCPEnabled = $_.DHCPEnabled
+					  DHCPServer = $_.DHCPServer
+					  IPAddress = $_.IPAddress
+					  IPSubnet = $_.IPSubnet
+					  DefaultGateway = $_.DefaultGateway
+					  DNSDomain = $_.DNSDomain
+					  DNSServerSearchOrder = $_.DNSServerSearchOrder
+					  MACAddress = $_.MACAddress
+					}
+				}
 
 # --- Printers ---
 $printers = Get-CimInstance -ClassName CIM_Printer | Select-Object `
