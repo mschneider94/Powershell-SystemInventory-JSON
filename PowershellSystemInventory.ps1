@@ -7,7 +7,7 @@
   Collects machine info via CIM/WMI and writes a single JSON file.
 
 .PARAMETER OutputPath
-  Folder to write the JSON file to (default C:\Temp).
+  Folder to write the JSON file to (default $PSScriptRoot).
 
 .PARAMETER IncludeInstalledProducts
   Includes Win32_Product (slow; may trigger MSI self-repair). Off by default.
@@ -19,7 +19,7 @@
 
 [CmdletBinding()]
 param(
-  [string]$OutputPath = 'C:\Temp',
+  [string]$OutputPath = $PSScriptRoot,
   [switch]$IncludeInstalledProducts
 )
 
